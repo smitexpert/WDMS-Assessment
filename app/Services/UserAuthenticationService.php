@@ -15,9 +15,11 @@ use Laravel\Passport\Client;
 class UserAuthenticationService {
 
     protected $user_role_id;
+    protected $userVerificationTokenRepository;
 
     public function __construct() {
         $this->user_role_id = 2;
+        $this->userVerificationTokenRepository = new UserVerificationTokenRepository();
     }
 
     public function register(array $data) {
@@ -31,10 +33,23 @@ class UserAuthenticationService {
 
     public function sendUserVerificationEmail(User $user) {
 
-        $userVerificationTokenRepository = new UserVerificationTokenRepository();
-        $userVerificationToken = $userVerificationTokenRepository->create($user, 'mail');
+        if($this->userVerificationTokenRepository->getVerifyStatusByUser($user)) {
+            throw new Exception("User already verified.");
+        }
+
+        $userVerificationToken = $this->userVerificationTokenRepository->generate($user, 'mail');
 
         $user->notify(new ConfirmUserRegistrationMailNotification($userVerificationToken));
+    }
+
+
+    public function verifyUserEmailCode(User $user, $code) {
+
+        if($this->userVerificationTokenRepository->getVerifyStatusByUser($user)) {
+            throw new Exception("User already verified.");
+        }
+
+        return $this->userVerificationTokenRepository->verifyUsingUserCode($user, $code);
     }
 
 

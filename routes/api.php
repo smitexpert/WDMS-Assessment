@@ -21,3 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('register', [App\Http\Controllers\Api\v1\UserAuthenticationController::class, 'register']);
 Route::post('login', [App\Http\Controllers\Api\v1\UserAuthenticationController::class, 'auth']);
+
+
+Route::post('verify-email', [App\Http\Controllers\Api\v1\UserEmailVerifyController::class, 'verifyEmail'])->middleware('auth:api');
+Route::post('resend-verify-email', [App\Http\Controllers\Api\v1\UserEmailVerifyController::class, 'resendVerifyEmail'])->middleware('auth:api');
+
+Route::middleware(['auth:api', 'user_verified'])->group(function(){
+    Route::get('wallet', [App\Http\Controllers\Api\v1\UserWalletController::class, 'index']);
+});

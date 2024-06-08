@@ -14,4 +14,8 @@ class Wallet extends Model
         'currency_id',
         'balance'
     ];
+
+    protected $casts = [
+        'balance' => 'float'
+    ];
 }
