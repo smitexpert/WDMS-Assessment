@@ -21,13 +21,31 @@ class UserAuthenticationController extends Controller
             $user = $userAuthenticationService->register($request->only(['name', 'email', 'password']));
             $userAuthenticationService->sendUserVerificationEmail($user);
 
+            // TODO: Login the user after registration.
+
             DB::commit();
 
-            return response()->success($user);
+            $userAuthentication = $userAuthenticationService->userAuthAttempt($request->email, $request->password);
+
+            if(!$userAuthentication)
+                return response()->error('Invalid Usercredentials', ['response' => 'Invalid Usercredentials', 'response_code' => '40401']);
+
+            return response()->success($userAuthentication);
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
         }
 
+    }
+
+
+    public function auth(Request $request, UserAuthenticationService $userAuthenticationService) {
+
+        $userAuthentication = $userAuthenticationService->userAuthAttempt($request->email, $request->password);
+
+        if(!$userAuthentication)
+            return response()->error('Invalid Usercredentials', ['response' => 'Invalid Usercredentials', 'response_code' => '40401']);
+
+        return response()->success($userAuthentication);
     }
 }

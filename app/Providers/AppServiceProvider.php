@@ -26,5 +26,13 @@ class AppServiceProvider extends ServiceProvider
                 'data' => $value,
             ]);
         });
+
+        Response::macro('error', function($value, $data = []){
+            return Response::make([
+                'success' => false,
+                'data' => [],
+                'message' => $value
+            ]);
+        });
     }
 }
