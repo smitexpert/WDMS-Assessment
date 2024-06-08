@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\ConfirmUserRegistrationMailNotification;
+use App\Repositories\UserMfaRepository;
 use App\Repositories\UserVerificationTokenRepository;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -16,10 +17,12 @@ class UserAuthenticationService {
 
     protected $user_role_id;
     protected $userVerificationTokenRepository;
+    protected $mfaRepository;
 
     public function __construct() {
         $this->user_role_id = 2;
         $this->userVerificationTokenRepository = new UserVerificationTokenRepository();
+        $this->mfaRepository = new UserMfaRepository();
     }
 
     public function register(array $data) {
@@ -49,14 +52,24 @@ class UserAuthenticationService {
             throw new Exception("User already verified.");
         }
 
-        return $this->userVerificationTokenRepository->verifyUsingUserCode($user, $code);
+        $result = $this->userVerificationTokenRepository->verifyUsingUserCode($user, $code);
+
+        if($result === false) {
+            return false;
+        }
+
+        $user->update([
+            'email_verified_at' => now()
+        ]);
+
+        return true;;
     }
 
 
     public function userAuthAttempt($email, $password) {
         $user = User::where('email', $email)->first();
 
-        if (!$user && !Hash::check($password, $user->password)) {
+        if (!$user || !Hash::check($password, $user->password)) {
             return false;
         }
 
@@ -76,6 +89,19 @@ class UserAuthenticationService {
         ]);
 
         return $response->json();
+    }
+
+
+    public function enableUserMfa(User $user, $provider) {
+
+        if($this->mfaRepository->findProviderByName($user, $provider))
+            return false;
+
+        return $this->mfaRepository->create($user, $provider);
+    }
+
+    public function removeUserMfa(User $user, $provider) {
+        return $this->mfaRepository->delete($user, $provider);
     }
 
 }

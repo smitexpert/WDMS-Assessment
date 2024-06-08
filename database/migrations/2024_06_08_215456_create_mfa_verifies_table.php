@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('multi_factor_auths', function (Blueprint $table) {
+        Schema::create('mfa_verifies', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users', 'id')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('provider');
-            $table->timestamp('verified_at');
+            $table->string('code');
+            $table->string('token_id')->nullable();
+            $table->timestamp('expire_at');
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('multi_factor_auths');
+        Schema::dropIfExists('mfa_verifies');
     }
 };
