@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\Role;
 use App\Models\User;
 use App\Notifications\ConfirmUserRegistrationMailNotification;
+use App\Notifications\UserMfaNotification;
 use App\Repositories\UserMfaRepository;
+use App\Repositories\UserMfaVerifyRepository;
 use App\Repositories\UserVerificationTokenRepository;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -18,11 +20,13 @@ class UserAuthenticationService {
     protected $user_role_id;
     protected $userVerificationTokenRepository;
     protected $mfaRepository;
+    protected $userMfaVerifyRepository;
 
     public function __construct() {
         $this->user_role_id = 2;
         $this->userVerificationTokenRepository = new UserVerificationTokenRepository();
         $this->mfaRepository = new UserMfaRepository();
+        $this->userMfaVerifyRepository = new UserMfaVerifyRepository();
     }
 
     public function register(array $data) {
@@ -104,4 +108,31 @@ class UserAuthenticationService {
         return $this->mfaRepository->delete($user, $provider);
     }
 
+    public function getUserMfaProvider(User $user) {
+        return $this->mfaRepository->findAllProviderByUser($user);
+    }
+
+    public function userMfaProviderByName(User $user, $provider) {
+        return $this->mfaRepository->findProviderByName($user, $provider);
+    }
+
+    public function createUserMfaVerify(User $user, $provider) {
+        return $this->userMfaVerifyRepository->create($user, $provider);
+    }
+
+    public function sendUserMfaCode(User $user, $code, $provider) {
+        $user->notify(new UserMfaNotification($code, $provider));
+    }
+
+    public function verifyUserMfaCode(User $user, $code, $token_id) {
+        $findMfa = $this->userMfaVerifyRepository->findByCode($user, $code);
+
+        if(!$findMfa)
+            throw new Exception("Invalid Code provided");
+
+        if($findMfa->expire_at < now())
+            throw new Exception("Code is expired");
+
+        $this->userMfaVerifyRepository->verifyCode($user, $code, $token_id);
+    }
 }

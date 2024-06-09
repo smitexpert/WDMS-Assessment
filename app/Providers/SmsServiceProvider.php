@@ -17,8 +17,6 @@ class SmsServiceProvider extends ServiceProvider
             SmsService::class,
             SmsLogService::class
         );
-
-        logger("Working Here..");
     }
 
     /**

@@ -26,6 +26,10 @@ class UserMfaRepository {
         return $mfa;
     }
 
+    public function findAllProviderByUser(User $user) {
+        return MfaProvider::where('user_id', $user->id)->select('provider')->get();
+    }
+
     public function delete(User $user, $provider) {
         $mfa = MfaProvider::where('user_id', $user->id)
             ->where('provider', $provider)

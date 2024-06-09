@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Enums\MfaEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MfaSettingRequest;
+use App\Http\Requests\UserMfaCodeVerifyRequest;
 use App\Models\MfaProvider;
 use App\Models\User;
 use App\Services\UserAuthenticationService;
@@ -53,5 +54,40 @@ class UserMfaController extends Controller
         return response()->success([
             'response' => "User MFA removed successfully"
         ]);
+    }
+
+    public function getUserProvider(UserAuthenticationService $userAuthenticationService) {
+        $providers = $userAuthenticationService->getUserMfaProvider(Auth::user());
+
+        return response()->success($providers);
+    }
+
+    public function send(MfaSettingRequest $request, UserAuthenticationService $userAuthenticationService) {
+        $userMfaProvider = $userAuthenticationService->userMfaProviderByName(Auth::user(), $request->provider);
+
+        if(!$userMfaProvider)
+            return response()->error("User MFA provider not found", [], 404);
+
+        $data = $userAuthenticationService->createUserMfaVerify(Auth::user(), $request->provider);
+        $userAuthenticationService->sendUserMfaCode(Auth::user(), $data->code, $request->provider);
+
+        return response()->success([
+           'response' => "User MFA code sent"
+        ]);
+    }
+
+    public function verify(UserMfaCodeVerifyRequest $request, UserAuthenticationService $userAuthenticationService) {
+
+        try {
+            $userAuthenticationService->verifyUserMfaCode(Auth::user(), $request->code, $request->user()->token()->id);
+
+            return response()->success([
+               'response' => "User MFA code verified"
+            ]);
+
+        } catch (\Throwable $th) {
+            return response()->error($th->getMessage(), [], 503);
+        }
+
     }
 }
