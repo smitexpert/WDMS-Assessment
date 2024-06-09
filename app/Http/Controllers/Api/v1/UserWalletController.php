@@ -12,10 +12,7 @@ class UserWalletController extends Controller
 {
 
     public function index() {
-
-        $wallet = Auth::user()->load('mfaProviders');
-
-        // $wallet = Wallet::where('user_id', Auth::user()->id)->first();
+        $wallet = Wallet::where('user_id', Auth::user()->id)->first();
         return response()->success($wallet);
     }
 }

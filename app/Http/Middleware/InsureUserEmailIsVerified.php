@@ -20,7 +20,7 @@ class InsureUserEmailIsVerified
             abort(401);
         }
 
-        if(auth()->user()->email_verified_at == null) {
+        if(auth()->user()->email_verified_at == null && (auth()->user()->role_id == 2)) {
             return response()->error('Your email address is not verified.', [], 403);
         }
 
