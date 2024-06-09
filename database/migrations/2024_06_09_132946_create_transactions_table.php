@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users', 'id')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('wallet_id')->constrained('wallets', 'id')->cascadeOnUpdate()->cascadeOnDelete();
             $table->enum('type', ['add', 'withdraw']);
-            $table->decimal('amount', 10, 2);
+            $table->float('amount', 10, 2);
             $table->timestamps();
         });
     }

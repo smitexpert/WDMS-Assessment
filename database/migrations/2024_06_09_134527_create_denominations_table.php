@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('wallet_id')->constrained('wallets', 'id')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
-            $table->decimal('denominations', 10, 2);
+            $table->decimal('denomination', 10, 2);
             $table->integer('quantity');
             $table->timestamps();
         });

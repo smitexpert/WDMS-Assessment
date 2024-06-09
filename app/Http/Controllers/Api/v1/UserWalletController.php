@@ -12,7 +12,7 @@ class UserWalletController extends Controller
 {
 
     public function index() {
-        $wallet = Wallet::with('currency')->where('user_id', Auth::user()->id)->first();
+        $wallet = Wallet::with('currency', 'denominations')->where('user_id', Auth::user()->id)->get();
         return response()->success($wallet);
     }
 }

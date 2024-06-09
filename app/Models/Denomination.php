@@ -12,7 +12,12 @@ class Denomination extends Model
     protected $fillable = [
         'wallet_id',
         'name',
-        'denominations',
+        'denomination',
         'quantity',
     ];
+
+
+    public function wallet() {
+        return $this->belongsTo(Wallet::class);
+    }
 }

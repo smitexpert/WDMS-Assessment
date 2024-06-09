@@ -15,4 +15,8 @@ class Transaction extends Model
         'type',
         'amount',
     ];
+
+    protected $casts = [
+        'amount' => 'float',
+    ];
 }
