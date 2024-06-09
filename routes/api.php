@@ -38,9 +38,11 @@ Route::middleware(['auth:api', 'user_verified'])->group(function(){
 
     Route::middleware('mfa.verify')->group(function(){
         Route::get('wallets', [App\Http\Controllers\Api\v1\UserWalletController::class, 'index']);
-        Route::post('wallets/{wallet_id}/withdraw', [App\Http\Controllers\Api\v1\WithdrawController::class, 'withdraw']);
         Route::get('wallets/{wallet_id}/denominations', [App\Http\Controllers\Api\v1\DenominationController::class, 'index']);
         Route::post('denomination/add', [App\Http\Controllers\Api\v1\DenominationController::class, 'store']);
         Route::post('denomination/remove', [App\Http\Controllers\Api\v1\DenominationController::class, 'remove']);
+
+
+        Route::get('transactions', [App\Http\Controllers\Api\v1\TransactionController::class, 'index']);
     });
 });

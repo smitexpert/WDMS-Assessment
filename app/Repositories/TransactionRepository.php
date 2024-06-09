@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Wallet;
 
 class TransactionRepository {
 
@@ -22,6 +23,15 @@ class TransactionRepository {
                 throw $th;
             }
 
+    }
+
+
+    public function getTransactionsByUser(User $user) {
+        return Transaction::with('wallet.currency')->where('user_id', $user->id)->orderBy('id', 'DESC')->get();
+    }
+
+    public function getTransactionsByWallet(User $user, Wallet $wallet) {
+        return Transaction::with('wallet.currency')->where('user_id', $user->id)->where('wallet_id', $wallet->id)->orderBy('id', 'DESC')->get();
     }
 
 }
