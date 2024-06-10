@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Wallet;
 use App\Repositories\TransactionRepository;
 
 class TransactionService {
@@ -19,6 +20,14 @@ class TransactionService {
 
     public function withdrawBalance(User $user, $data) {
         return $this->transactionRepository->create($user, $data, 'withdraw');
+    }
+
+    public function getTransactions(User $user) {
+        return $this->transactionRepository->getTransactionsByUser($user);
+    }
+
+    public function getTransactionsByWallet(User $user, Wallet $wallet) {
+        return $this->transactionRepository->getTransactionsByWallet($user, $wallet);
     }
 
 }
