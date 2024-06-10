@@ -22,7 +22,10 @@ class InsureUserMfaVerification
             $mfaVerify = new UserMfaVerifyRepository();
 
             if(!$mfaVerify->checkUserToken(request()->user(), request()->user()->token()->id))
-                abort(403, 'You are not MFA verified.');
+                return response()->error('You are not MFA verified.', [
+                    'response' => 'You are not MFA verified.',
+                    'response_code' => '40442'
+                ], 403);
         }
 
         return $next($request);

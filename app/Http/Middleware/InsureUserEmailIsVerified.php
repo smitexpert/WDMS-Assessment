@@ -21,7 +21,10 @@ class InsureUserEmailIsVerified
         }
 
         if(auth()->user()->email_verified_at == null && (auth()->user()->role_id == 2)) {
-            return response()->error('Your email address is not verified.', [], 403);
+            return response()->error('Your email address is not verified.', [
+                'response' => 'Your email address is not verified.',
+               'response_code' => '40441'
+            ], 403);
         }
 
         return $next($request);
