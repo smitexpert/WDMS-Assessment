@@ -92,7 +92,7 @@ class UserAuthenticationService {
             'scope' => '*',
         ]);
 
-        return $response->json();
+        return [...collect($response->json())->toArray(), ...$this->userVerificaiton($email)];
     }
 
 
@@ -134,5 +134,15 @@ class UserAuthenticationService {
             throw new Exception("Code is expired");
 
         $this->userMfaVerifyRepository->verifyCode($user, $code, $token_id);
+    }
+
+    public function userVerificaiton($email) {
+        $user = User::where('email', $email)->first();
+
+
+        return [
+            'is_email_verified' => (bool) $user->email_verified_at ?? false,
+            'mfa_provider' => $this->getUserMfaProvider($user) ?? false
+        ];
     }
 }
