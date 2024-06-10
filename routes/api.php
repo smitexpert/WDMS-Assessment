@@ -37,6 +37,7 @@ Route::middleware(['auth:api', 'user_verified'])->group(function(){
     Route::post('mfa-code-verify', [App\Http\Controllers\Api\v1\UserMfaController::class, 'verify']);
 
     Route::middleware('mfa.verify')->group(function(){
+        Route::get('profile', [App\Http\Controllers\Api\v1\UserController::class, 'index']);
         Route::get('wallets', [App\Http\Controllers\Api\v1\UserWalletController::class, 'index']);
         Route::post('wallets', [App\Http\Controllers\Api\v1\UserWalletController::class, 'store']);
         Route::get('wallets/{wallet_id}/denominations', [App\Http\Controllers\Api\v1\DenominationController::class, 'index']);
