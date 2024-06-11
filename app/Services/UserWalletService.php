@@ -19,7 +19,7 @@ class UserWalletService {
 
     public function createUserWallet(User $user, $currency_id = false) {
 
-        $walletCurrency = $this->getUserCurrency($user, $currency_id ?? 1);
+        $walletCurrency = $this->getUserCurrency($user, $currency_id == false ? 1 : $currency_id);
 
         if(!$walletCurrency)
             throw new Exception("Invalid wallet currency");
