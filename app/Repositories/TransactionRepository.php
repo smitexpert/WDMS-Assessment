@@ -27,7 +27,7 @@ class TransactionRepository {
 
 
     public function getTransactionsByUser(User $user) {
-        return Transaction::with('wallet.currency')->where('user_id', $user->id)->orderBy('id', 'DESC')->get();
+        return Transaction::with('wallet.currency')->where('user_id', $user->id)->orderBy('id', 'DESC')->paginate();
     }
 
     public function getTransactionsByWallet(User $user, Wallet $wallet) {

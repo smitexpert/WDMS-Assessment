@@ -55,4 +55,8 @@ class User extends Authenticatable
     public function mfaProviders() {
         return $this->hasMany(MfaProvider::class, 'user_id', 'id');
     }
+
+    public function wallets() {
+        return $this->hasMany(Wallet::class, 'user_id', 'id');
+    }
 }

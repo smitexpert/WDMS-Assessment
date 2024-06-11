@@ -47,5 +47,7 @@ Route::middleware(['auth:api', 'user_verified'])->group(function(){
 
 
         Route::get('transactions', [App\Http\Controllers\Api\v1\TransactionController::class, 'index']);
+
+        Route::get('available-currencies', [App\Http\Controllers\Api\v1\CurrencyController::class, 'index']);
     });
 });

@@ -20,7 +20,7 @@ class DenominationRepository {
     }
 
     public function findByWalletId(Wallet $wallet) {
-        return Denomination::with('wallet')->where('wallet_id', $wallet->id)->get();
+        return Denomination::with('wallet')->where('wallet_id', $wallet->id)->paginate();
     }
 
     public function create(User $user, array $data) {
