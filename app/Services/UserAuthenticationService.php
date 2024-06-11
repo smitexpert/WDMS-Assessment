@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Laravel\Passport\Client;
+use Laravel\Passport\RefreshTokenRepository;
+use Laravel\Passport\TokenRepository;
 
 class UserAuthenticationService {
 
@@ -21,12 +23,16 @@ class UserAuthenticationService {
     protected $userVerificationTokenRepository;
     protected $mfaRepository;
     protected $userMfaVerifyRepository;
+    protected $authTokenRepository;
+    protected $authRefreshTokenRepository;
 
     public function __construct() {
         $this->user_role_id = 2;
         $this->userVerificationTokenRepository = new UserVerificationTokenRepository();
         $this->mfaRepository = new UserMfaRepository();
         $this->userMfaVerifyRepository = new UserMfaVerifyRepository();
+        $this->authTokenRepository = app(TokenRepository::class);
+        $this->authRefreshTokenRepository = app(RefreshTokenRepository::class);
     }
 
     public function register(array $data) {
@@ -144,5 +150,16 @@ class UserAuthenticationService {
             'is_email_verified' => (bool) $user->email_verified_at ?? false,
             'mfa_provider' => $this->getUserMfaProvider($user) ?? false
         ];
+    }
+
+    public function logoutUser($tokenId) {
+
+        try {
+            $this->authTokenRepository->revokeAccessToken($tokenId);
+            $this->authRefreshTokenRepository->revokeRefreshTokensByAccessTokenId($tokenId);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
     }
 }

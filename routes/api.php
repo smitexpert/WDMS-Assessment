@@ -23,6 +23,7 @@ Route::post('register', [App\Http\Controllers\Api\v1\UserAuthenticationControlle
 Route::post('login', [App\Http\Controllers\Api\v1\UserAuthenticationController::class, 'auth']);
 
 
+Route::post('logout', [App\Http\Controllers\Api\v1\UserAuthenticationController::class, 'logout'])->middleware('auth:api');
 Route::post('verify-email', [App\Http\Controllers\Api\v1\UserEmailVerifyController::class, 'verifyEmail'])->middleware('auth:api');
 Route::post('resend-verify-email', [App\Http\Controllers\Api\v1\UserEmailVerifyController::class, 'resendVerifyEmail'])->middleware('auth:api');
 
@@ -46,5 +47,7 @@ Route::middleware(['auth:api', 'user_verified'])->group(function(){
 
 
         Route::get('transactions', [App\Http\Controllers\Api\v1\TransactionController::class, 'index']);
+
+        Route::get('available-currencies', [App\Http\Controllers\Api\v1\CurrencyController::class, 'index']);
     });
 });

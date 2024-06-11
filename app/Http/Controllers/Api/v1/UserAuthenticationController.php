@@ -48,4 +48,19 @@ class UserAuthenticationController extends Controller
 
         return response()->success($userAuthentication);
     }
+
+
+    public function logout(UserAuthenticationService $userAuthenticationService) {
+
+        try {
+            $userAuthenticationService->logoutUser(request()->user()->token()->id);
+
+            return response()->success("User logged out");
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->error('Something went wrong', ['response' => $th->getMessage()], 503);
+        }
+
+    }
 }

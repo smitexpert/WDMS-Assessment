@@ -7,7 +7,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## MFA Syste
+## MFA System
 For phone the code will be available in the laravel logger.
 Mail system will be deliver the code to the mail.
 Need to run php artisan queue:work to deliver the code in both cases.
